@@ -35,5 +35,58 @@ class juegoController {
         // retorno $respuesta -> la cual puede ser un status 200 OK , 404 not found o 500
         return $respuesta;
     }
+
+
+    public function insertJuego($nombre, $desc){
+        try{
+            $conn = conectarbd();
+
+            $sql = "INSERT INTO `juego`(`nombre`, `id`) VALUES ('$nombre', '$desc')";
+
+            $response = mysqli_query($conn, $sql);
+
+            if(!$response){
+                $respuesta =  ['status'=> 401, 'result'=>"No se ha creado un nuevo juego"];
+            }
+            else{
+                $respuesta = ['status'=>200, 'result'=>"Se ha creado un nuevo juego"];
+            }
+
+            $conn = desconectarbd($conn);
+        }
+        catch(Exception $e){
+            // Si por ejemplo no me pude conectar a la base de datos envio un status 500
+            $respuesta = ['status'=>500, 'result'=> $e->getMessage()];
+        }
+
+        return $respuesta;
+    }
+
+
+
+    public function deleteJuego($id){
+        try{
+            $conn = conectarbd();
+
+            $sql = "DELETE FROM `juego` WHERE id = $id";
+
+            $response = mysqli_query($conn, $sql);
+
+            if(!$response){
+                $respuesta =  ['status'=> 401, 'result'=>"No se ha podido eliminar el juego."];
+            }
+            else{
+                $respuesta = ['status'=>200, 'result'=>"El juego se ha eliminado correctamente."];
+            }
+
+            $conn = desconectarbd($conn);
+        }
+        catch(Exception $e){
+            // Si por ejemplo no me pude conectar a la base de datos envio un status 500
+            $respuesta = ['status'=>500, 'result'=> $e->getMessage()];
+        }
+
+        return $respuesta;
+    }
 }
 ?>

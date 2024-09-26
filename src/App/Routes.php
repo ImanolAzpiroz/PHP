@@ -141,14 +141,25 @@ require __DIR__ . "/../Controllers/calificacionController.php";
     // da de alta un nuevo juego. Solo lo puede hacer un usuario logueado y que sea administrador.
     $app->post('/juego', function(Request $request, Response $response){
 
-        $datos_usuario = $request->getParsedBody();
+        $juegoController = new juegoController();
 
-        $nombre = $datos_usuario['nombre_usuario']; // Bueno aca irian los campos de juego
-        $clave = $datos_usuario['clave'];
-        $admin = $datos_usuario['es_admin'];
+        $datos_juego = $request->getParsedBody();
+
+        $nombre = $datos_juego['nombre_juego']; // Aca irian los campos de juego
+        
+        $desc = $datos_juego['descripcion'];
+
+
+        // Hay que verificar si es admin y esta logueado
 
         // insert a la base
 
+        $respuesta = $juegoController->insertJuego($nombre, $desc);
+
+        $response->getBody()->write(json_encode($respuesta['result']));
+
+        return $response->withHeader('Content-Type', 'application/json')->withStatus($respuesta['status']);
+ 
     });
 
     // actualiza los datos de un juego existente. Solo lo puede hacer un usuario logueado y que sea administrador.
@@ -160,9 +171,17 @@ require __DIR__ . "/../Controllers/calificacionController.php";
     //  borra el juego siempre y cuando no tenga calificaciones. Solo lo puede hacer un usuario logueado y que sea administrador.
     $app->delete('/juego/{id}', function(Request $request, Response $response){
 
-        $user_id = $request -> getAttribute('id');
+        $juegoController = new juegoController();
+
+        $juego_id = $request -> getAttribute('id');
 
         // delete a la base
+        $respuesta = $juegoController->deleteJuego($juego_id);
+
+        $response->getBody()->write(json_encode($respuesta['result']));
+
+        return $response->withHeader('Content-Type', 'application/json')->withStatus($respuesta['status']);
+
 
     });
 
